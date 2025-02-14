@@ -1,15 +1,14 @@
-import * as THREE from 'three';
-import vertexShader from './shaders/vertex.glsl';
-import fragmentShader from './shaders/fragment.glsl';
+import * as THREE from "three";
+import { OrbitControls } from "three/examples/jsm/Addons.js";
+import { BlinnPhong } from "./materials/blinnPhong";
+import GUI from "lil-gui";
 
 class App {
   private scene: THREE.Scene;
   private camera: THREE.PerspectiveCamera;
   private renderer: THREE.WebGLRenderer;
-  private geometry: THREE.PlaneGeometry;
-  private material: THREE.ShaderMaterial;
-  private mesh: THREE.Mesh;
-  private startTime: number;
+  // private clock: THREE.Clock;
+  private controls: OrbitControls;
 
   private camConfig = {
     fov: 75,
@@ -27,54 +26,42 @@ class App {
       this.camConfig.fov,
       this.camConfig.aspect,
       this.camConfig.near,
-      this.camConfig.far
+      this.camConfig.far,
     );
+    this.camera.position.set(0, 0, 3);
+
+    // Setup clock
+    // this.clock = new THREE.Clock();
 
     // Setup renderer
     this.renderer = new THREE.WebGLRenderer({
       antialias: true,
-      powerPreference: 'high-performance',
+      powerPreference: "high-performance",
     });
     if (!this.renderer.capabilities.isWebGL2) {
-      console.warn('WebGL 2.0 is not available on this browser.');
+      console.warn("WebGL 2.0 is not available on this browser.");
     }
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(this.renderer.domElement);
 
-    const resolution = new THREE.Vector2(window.innerWidth, window.innerHeight);
+    // const resolution = new THREE.Vector2(window.innerWidth, window.innerHeight);
 
-    // Create shader material
-    this.geometry = new THREE.PlaneGeometry(2, 2);
-    this.material = new THREE.RawShaderMaterial({
-      vertexShader,
-      fragmentShader,
-      uniforms: {
-        projectionMatrix: { value: this.camera.projectionMatrix },
-        viewMatrix: { value: this.camera.matrixWorldInverse },
-        modelMatrix: { value: new THREE.Matrix4() },
-        // custom uniforms
-        u_time: { value: 0.0 },
-        u_resolution: { value: resolution },
-      },
-      glslVersion: THREE.GLSL3,
-    });
-    // Default way you'll find in TONS of tutorials
-    // this.material = new THREE.ShaderMaterial({
-    //   vertexShader,
-    //   fragmentShader,
-    //   uniforms: {
-    //     time: { value: 0.0 },
-    //     resolution: { value: resolution },
-    //   },
-    // });
+    // Creates orbit controls
+    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    this.controls.enableDamping = true;
+    this.controls.dampingFactor = 0.05;
+    this.controls.screenSpacePanning = false;
+    this.controls.maxPolarAngle = Math.PI / 2;
+    this.controls.keyPanSpeed = 30;
 
-    // Create mesh
-    this.mesh = new THREE.Mesh(this.geometry, this.material);
-    this.scene.add(this.mesh);
-    this.camera.position.z = 1.5;
+    // GUI controls
+    const gui = new GUI();
+
+    // Adds Blinn-Phong cube
+    const cube = new BlinnPhong(this.camera, gui);
+    this.scene.add(cube.mesh);
 
     // Initialize
-    this.startTime = Date.now();
     this.onWindowResize();
 
     // Bind methods
@@ -82,16 +69,15 @@ class App {
     this.animate = this.animate.bind(this);
 
     // Add event listeners
-    window.addEventListener('resize', this.onWindowResize);
+    window.addEventListener("resize", this.onWindowResize);
 
     // Start the main loop
-    this.animate();
+    this.renderer.setAnimationLoop(this.animate);
   }
 
   private animate(): void {
-    requestAnimationFrame(this.animate);
-    const elapsedTime = (Date.now() - this.startTime) / 1000;
-    this.material.uniforms.u_time.value = elapsedTime;
+    // const deltaTime = this.clock.getDelta();
+    this.controls.update();
     this.renderer.render(this.scene, this.camera);
   }
 
@@ -99,8 +85,7 @@ class App {
     this.camera.aspect = this.camConfig.aspect;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(window.innerWidth, window.innerHeight);
-    this.material.uniforms.u_resolution.value.set(window.innerWidth, window.innerHeight);
   }
 }
 
-const myApp = new App();
+new App();
