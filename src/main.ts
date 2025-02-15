@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 import { BlinnPhong } from "./materials/blinnPhong";
 import GUI from "lil-gui";
+import { CRT } from "./materials/crt";
 
 class App {
   private scene: THREE.Scene;
@@ -58,8 +59,10 @@ class App {
     const gui = new GUI();
 
     // Adds Blinn-Phong cube
-    const cube = new BlinnPhong(this.camera, gui);
-    this.scene.add(cube.mesh);
+    // const cube = new BlinnPhong(this.camera, gui);
+    // this.scene.add(cube.mesh);
+    const plane = new CRT(this.camera, gui);
+    this.scene.add(plane.mesh);
 
     // Initialize
     this.onWindowResize();
