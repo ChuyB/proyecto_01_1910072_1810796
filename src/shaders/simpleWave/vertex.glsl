@@ -6,7 +6,7 @@ uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 // - custom uniforms
 uniform float u_time;
-uniform float waveAmplitude;
+uniform float waveFrequency;
 
 // - attributes
 in vec3 position;
@@ -26,27 +26,13 @@ vec4 clipSpaceTransform(vec4 modelPosition) {
 }
 
 void main() {
-  // 01. base vertex shader
-  // vec4 viewPosition = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
 
-  // 02. basic vertex mod with sin function
-  // vec4 modelPosition = modelMatrix * vec4(position, 1.0);
-  // modelPosition.z += sin(modelPosition.x * 18.0) * 0.1;
-  // vec4 viewPosition = clipSpaceTransform(modelPosition);
-
-  // 03. attribute handling
-  // vec4 modelPosition = modelMatrix * vec4(position, 1.0);
-  // modelPosition.z += a_random * 0.071;
-  // vec4 viewPosition = clipSpaceTransform(modelPosition);
-  // v_random = a_random;
-
-  // 04. attribute handling with custom uniform (time)
+  // attribute handling with custom uniform (time)
   vec4 modelPosition = modelMatrix * vec4(position, 1.0);
-  v_height = sin(modelPosition.x * waveAmplitude + u_time * 1.0) * 0.1;
+  v_height = sin(modelPosition.x * waveFrequency + u_time * 1.0) * 0.1;
   modelPosition.z += v_height;
   vec4 viewPosition = clipSpaceTransform(modelPosition);
 
-  // 05. passing UVs
   v_uv = uv;
 
   gl_Position = viewPosition;

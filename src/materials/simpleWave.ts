@@ -18,8 +18,9 @@ export class SimpleWave {
 
     // Default uniforms for shaders
     this.defaultUniforms = {
-      waveAmplitude: 10.0,
+      waveFrequency: 10.0,
       u_time: 0.0,
+      resolution: new THREE.Vector2(window.innerWidth, window.innerHeight),
     };
     this.geometry = new THREE.PlaneGeometry(1, 1, 32, 32);
     this.geometry.computeVertexNormals();
@@ -36,8 +37,9 @@ export class SimpleWave {
       vertexShader,
       fragmentShader,
       uniforms: {
-        waveAmplitude: { value: uniforms.waveAmplitude },
+        waveFrequency: { value: uniforms.waveFrequency },
         u_time: { value: uniforms.u_time },
+        u_resolution: { value: uniforms.resolution},
         projectionMatrix: { value: this.camera.projectionMatrix },
         viewMatrix: { value: this.camera.matrixWorldInverse },
         modelMatrix: { value: new THREE.Matrix4() },
@@ -52,10 +54,10 @@ export class SimpleWave {
     const uniforms = this.defaultUniforms;
 
     generalFolder
-      .add(uniforms, "waveAmplitude", 0.0, 100.0)
-      .name("Wave Amplitude")
+      .add(uniforms, "waveFrequency", 0.0, 100.0)
+      .name("Wave Frequency")
       .onChange(
-        () => (this.material.uniforms.waveAmplitude.value = uniforms.waveAmplitude),
+        () => (this.material.uniforms.waveFrequency.value = uniforms.waveFrequency),
       );
   }
 

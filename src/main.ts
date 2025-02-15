@@ -8,6 +8,7 @@ class App {
   private scene: THREE.Scene;
   private camera: THREE.PerspectiveCamera;
   private renderer: THREE.WebGLRenderer;
+  private element: SimpleWave;
   // private clock: THREE.Clock;
   private controls: OrbitControls;
 
@@ -60,8 +61,8 @@ class App {
 
     // Adds Blinn-Phong cube
     // const cube = new BlinnPhong(this.camera, gui);
-    const cube = new SimpleWave(this.camera, gui);
-    this.scene.add(cube.mesh);
+    this.element = new SimpleWave(this.camera, gui);
+    this.scene.add(this.element.mesh);
 
     // Initialize
     this.onWindowResize();
@@ -73,19 +74,20 @@ class App {
     // Add event listeners
     window.addEventListener("resize", this.onWindowResize);
 
-    const animate = () => { //declaring here so the material is in the scope.
-      this.controls.update();
-      cube.updateTime();
-      this.renderer.render(this.scene, this.camera);
-    }
+    //const animate = () => { //declaring here so the material is in the scope.
+    //  this.controls.update();
+    //  cube.updateTime();
+    //  this.renderer.render(this.scene, this.camera);
+    //}
 
     // Start the main loop
-    this.renderer.setAnimationLoop(animate);
+    this.renderer.setAnimationLoop(this.animate);
   }
 
   private animate(): void {
     // const deltaTime = this.clock.getDelta();
     this.controls.update();
+    this.element.updateTime();
     this.renderer.render(this.scene, this.camera);
   }
 
@@ -93,7 +95,7 @@ class App {
     this.camera.aspect = this.camConfig.aspect;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(window.innerWidth, window.innerHeight);
-  }
+    this.element.material.uniforms.u_resolution.value.set(window.innerWidth, window.innerHeight);  }
 }
 
 new App();

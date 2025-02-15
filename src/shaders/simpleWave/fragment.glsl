@@ -11,9 +11,10 @@ vec3 red = vec3(0.811, 0.078, 0.168);
 vec3 yellow = vec3(0.968, 0.819, 0.090);
 vec3 blue = vec3(0, 0.2, 0.670);
 
-const float PROPORTION = 0.3;
-const float SIZE_PROPORTION = 1.7;
+const float PROPORTION = 0.1;
+const float SIZE_PROPORTION = 3.0;
 const float INTENSITY = 0.6;
+const float STAR_RADIUS = 0.025;
 
 float sdfBox(vec2 offset, vec2 p, vec2 b) {
   vec2 d = abs(p - offset) - b;
@@ -70,7 +71,7 @@ void main() {
   vec2 blueOffset = vec2(0.0f, v_height * PROPORTION * waveDirection);
   float distanceToBlue = sdfBox(blueOffset, uv, size / SIZE_PROPORTION);
   
-  vec2 yellowOffset = vec2(0.0f, 0.6f * PROPORTION);
+  vec2 yellowOffset = vec2(0.0f, 3.0f * PROPORTION);
   float distanceToYellow = sdfBox(yellowOffset, uv, size);
   
   vec3 color = red;
@@ -79,7 +80,7 @@ void main() {
 
   // stars
 
-  float baseStarRadius = 0.037f;
+  float baseStarRadius = STAR_RADIUS;
   float starOuterProportion = 8.0;
   const int numStars = 8;
   vec2 starOffsets[numStars];
@@ -92,8 +93,8 @@ void main() {
     float starRadius = baseStarRadius * (1.0 + 0.8 * v_height);
     
     // star locations relative to center (parabolic function in y)
-    float xOffset =  - 0.28 + float(i) * 0.08; // X offset
-    float yOffset = 0.07 - pow(float(i) - 3.5,2.0) * 0.01 + v_height * 0.3; 
+    float xOffset =  - 0.16 + float(i) * 0.045; // X offset
+    float yOffset = 0.035 - pow(float(i) - 3.5,2.0) * 0.005 + v_height * 0.3; 
     starOffsets[i] = vec2(xOffset, yOffset);
     
     // calculate sdf and set color
