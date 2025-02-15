@@ -149,4 +149,6 @@ export class BlinnPhong {
         () => (this.material.uniforms.screenGamma.value = uniforms.screenGamma),
       );
   }
+
+  updateTime(elapsedTime: number) {}
 }
