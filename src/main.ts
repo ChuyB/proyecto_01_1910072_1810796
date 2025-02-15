@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 import { BlinnPhong } from "./materials/blinnPhong";
+import { SimpleWave } from "./materials/simpleWave";
 import GUI from "lil-gui";
 
 class App {
@@ -58,7 +59,8 @@ class App {
     const gui = new GUI();
 
     // Adds Blinn-Phong cube
-    const cube = new BlinnPhong(this.camera, gui);
+    // const cube = new BlinnPhong(this.camera, gui);
+    const cube = new SimpleWave(this.camera, gui);
     this.scene.add(cube.mesh);
 
     // Initialize
@@ -71,8 +73,14 @@ class App {
     // Add event listeners
     window.addEventListener("resize", this.onWindowResize);
 
+    const animate = () => { //declaring here so the material is in the scope.
+      this.controls.update();
+      cube.updateTime();
+      this.renderer.render(this.scene, this.camera);
+    }
+
     // Start the main loop
-    this.renderer.setAnimationLoop(this.animate);
+    this.renderer.setAnimationLoop(animate);
   }
 
   private animate(): void {
