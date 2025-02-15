@@ -6,6 +6,7 @@ uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 // - custom uniforms
 uniform float u_time;
+uniform float waveAmplitude;
 
 // - attributes
 in vec3 position;
@@ -41,7 +42,7 @@ void main() {
 
   // 04. attribute handling with custom uniform (time)
   vec4 modelPosition = modelMatrix * vec4(position, 1.0);
-  v_height = sin(modelPosition.x * 10.0 + u_time * 1.0) * 0.1;
+  v_height = sin(modelPosition.x * waveAmplitude + u_time * 1.0) * 0.1;
   modelPosition.z += v_height;
   vec4 viewPosition = clipSpaceTransform(modelPosition);
 
