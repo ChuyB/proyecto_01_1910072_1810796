@@ -3,6 +3,7 @@ import { OrbitControls } from "three/examples/jsm/Addons.js";
 import { BlinnPhong } from "./materials/blinnPhong";
 import { SimpleWave } from "./materials/simpleWave";
 import GUI from "lil-gui";
+import { CRT } from "./materials/crt";
 
 class App {
   private scene: THREE.Scene;
