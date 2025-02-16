@@ -101,8 +101,9 @@ export class SimpleWave {
   }
 
   private addUIControls(geometrySize: number) {
-    const generalFolder = this.gui.addFolder("Simple Wave Shader");
-    const toggleFolder = this.gui.addFolder("Wave Toggle Variations (Seconds)");
+    const waves = this.gui.addFolder("Simple Wave Shader");
+    const generalFolder = waves.addFolder("General");
+    const toggleFolder = waves.addFolder("Wave Toggle Variations (Seconds)");
     const uniforms = this.defaultUniforms;
 
     generalFolder
@@ -144,7 +145,7 @@ export class SimpleWave {
     );
     toggleFolder
       .add(uniforms, "wavePropagationDelta", 0.0, geometrySize)
-      .name("Wave Propagation")
+      .name("Propagation Speed")
       .onChange(() => (this.material.uniforms.wavePropagationDelta.value = uniforms.wavePropagationDelta)
     );
     
