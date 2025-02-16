@@ -7,12 +7,14 @@ import fragmentShader from "../shaders/simpleWave/fragment.glsl";
 export class SimpleWave {
   private camera: THREE.PerspectiveCamera;
   private defaultUniforms: any;
-  private clock : THREE.Clock;
+  clock: THREE.Clock;
 //  geometry: THREE.PlaneGeometry;
   geometry: THREE.BoxGeometry;
   material: THREE.RawShaderMaterial;
   mesh: THREE.Mesh;
   gui: GUI;
+  raycaster = new THREE.Raycaster();
+  mouse = new THREE.Vector2();
 
   constructor(camera: THREE.PerspectiveCamera, gui: GUI) {
     this.camera = camera;
@@ -23,6 +25,7 @@ export class SimpleWave {
       waveSpeed: 1.0,
       waveAmplitude: 0.1,
       displacement: 0.0,
+      waveEnabled: true,
       u_time: 0.0,
       resolution: new THREE.Vector2(window.innerWidth, window.innerHeight),
     };
@@ -34,6 +37,24 @@ export class SimpleWave {
     this.clock = new THREE.Clock()
 
     this.addUIControls();
+    document.addEventListener("click", (event) => {
+
+      this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+      
+      this.raycaster.setFromCamera(this.mouse, this.camera);
+      const intersects = this.raycaster.intersectObjects([this.mesh]);
+
+      if (intersects.length > 0) {
+        console.log("Clicked on mesh");
+
+        const intersectionPoint = intersects[0].point;
+        this.material.uniforms.displacement.value = intersectionPoint.x;
+      }
+
+
+      this.material.uniforms.waveEnabled.value = !this.material.uniforms.waveEnabled.value;
+    });
   }
 
   private createMaterial(uniforms: any): THREE.RawShaderMaterial {
@@ -45,6 +66,7 @@ export class SimpleWave {
         waveSpeed: { value: uniforms.waveSpeed },
         waveAmplitude: { value: uniforms.waveAmplitude },
         displacement: { value: uniforms.displacement },
+        waveEnabled: { value: uniforms.waveEnabled },
         uTime: { value: uniforms.u_time },
         uResolution: { value: uniforms.resolution},
         projectionMatrix: { value: this.camera.projectionMatrix },
