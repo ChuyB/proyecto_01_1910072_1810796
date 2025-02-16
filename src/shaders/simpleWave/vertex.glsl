@@ -9,6 +9,7 @@ uniform float uTime;
 uniform float waveFrequency;
 uniform float waveAmplitude;
 uniform float waveSpeed;
+uniform float displacement;
 
 // - attributes
 in vec3 position;
@@ -29,9 +30,16 @@ vec4 clipSpaceTransform(vec4 modelPosition) {
 
 void main() {
 
-  // attribute handling with custom uniform (time)
   vec4 modelPosition = modelMatrix * vec4(position, 1.0);
-  v_height = sin(modelPosition.x * waveFrequency + uTime * waveSpeed) * waveAmplitude;
+  
+  // wave simmetry operations (dont fix if its not broken)
+  // this prevents from wave flattening in the transition for the symmetry point
+  float transitionSmoothness = 0.0;
+  float sign = smoothstep(-transitionSmoothness, transitionSmoothness, displacement - modelPosition.x ) * 2.0 - 1.0;
+  
+  
+  // attribute handling with custom uniform (time)
+  v_height = sign * sin((modelPosition.x - displacement) * waveFrequency + sign * uTime * waveSpeed) * waveAmplitude;
   modelPosition.z += v_height;
   vec4 viewPosition = clipSpaceTransform(modelPosition);
 

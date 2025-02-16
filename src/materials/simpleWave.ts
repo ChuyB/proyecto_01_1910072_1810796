@@ -22,6 +22,7 @@ export class SimpleWave {
       waveFrequency: 10.0,
       waveSpeed: 1.0,
       waveAmplitude: 0.1,
+      displacement: 0.0,
       u_time: 0.0,
       resolution: new THREE.Vector2(window.innerWidth, window.innerHeight),
     };
@@ -43,6 +44,7 @@ export class SimpleWave {
         waveFrequency: { value: uniforms.waveFrequency },
         waveSpeed: { value: uniforms.waveSpeed },
         waveAmplitude: { value: uniforms.waveAmplitude },
+        displacement: { value: uniforms.displacement },
         uTime: { value: uniforms.u_time },
         uResolution: { value: uniforms.resolution},
         projectionMatrix: { value: this.camera.projectionMatrix },
@@ -73,6 +75,11 @@ export class SimpleWave {
       .add(uniforms, "waveAmplitude", 0.0, 1.0)
       .name("Amplitude")
       .onChange(() => (this.material.uniforms.waveAmplitude.value = uniforms.waveAmplitude),
+      );
+    generalFolder
+      .add(uniforms, "displacement", -0.5, 0.5)
+      .name("Displacement")
+      .onChange(() => (this.material.uniforms.displacement.value = uniforms.displacement),
       );
   }
 
