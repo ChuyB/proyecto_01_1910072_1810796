@@ -8,7 +8,8 @@ export class SimpleWave {
   private camera: THREE.PerspectiveCamera;
   private defaultUniforms: any;
   private clock : THREE.Clock;
-  geometry: THREE.PlaneGeometry
+//  geometry: THREE.PlaneGeometry;
+  geometry: THREE.BoxGeometry;
   material: THREE.RawShaderMaterial;
   mesh: THREE.Mesh;
   gui: GUI;
@@ -24,7 +25,7 @@ export class SimpleWave {
       u_time: 0.0,
       resolution: new THREE.Vector2(window.innerWidth, window.innerHeight),
     };
-    this.geometry = new THREE.PlaneGeometry(1, 1, 32, 32);
+    this.geometry = new THREE.BoxGeometry(1, 1, 1, 32, 32, 32);
     this.geometry.computeVertexNormals();
     this.material = this.createMaterial(this.defaultUniforms);
     this.gui = gui;
