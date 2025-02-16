@@ -23,9 +23,13 @@ export class SimpleWave {
     this.defaultUniforms = {
       waveFrequency: 10.0,
       waveSpeed: 1.0,
-      waveAmplitude: 0.1,
+      waveMaxAmplitude: 0.1,
+      amplitudeDelta: 0.0,
+      toggleTime: 0.0,
       displacement: 0.0,
       waveEnabled: true,
+      waveReach: geometrySize,
+      wavePropagationDelta: 0.0,
       u_time: 0.0,
       resolution: new THREE.Vector2(window.innerWidth, window.innerHeight),
     };
@@ -66,6 +70,7 @@ export class SimpleWave {
     document.addEventListener("keydown", (event) => {
       if (event.key === " ") {
         this.material.uniforms.waveEnabled.value = !this.material.uniforms.waveEnabled.value;
+        this.material.uniforms.toggleTime.value = this.material.uniforms.uTime.value;
       }
     });
   }
@@ -77,9 +82,13 @@ export class SimpleWave {
       uniforms: {
         waveFrequency: { value: uniforms.waveFrequency },
         waveSpeed: { value: uniforms.waveSpeed },
-        waveAmplitude: { value: uniforms.waveAmplitude },
+        waveMaxAmplitude: { value: uniforms.waveMaxAmplitude },
         displacement: { value: uniforms.displacement },
         waveEnabled: { value: uniforms.waveEnabled },
+        waveReach: { value: uniforms.waveReach },
+        wavePropagationDelta: { value: uniforms.wavePropagationDelta },
+        amplitudeDelta: { value: uniforms.amplitudeDelta },
+        toggleTime: { value: uniforms.toggleTime },
         uTime: { value: uniforms.u_time },
         uResolution: { value: uniforms.resolution},
         projectionMatrix: { value: this.camera.projectionMatrix },
@@ -93,6 +102,7 @@ export class SimpleWave {
 
   private addUIControls(geometrySize: number) {
     const generalFolder = this.gui.addFolder("Simple Wave Shader");
+    const toggleFolder = this.gui.addFolder("Wave Toggle Variations (Seconds)");
     const uniforms = this.defaultUniforms;
 
     generalFolder
@@ -107,15 +117,37 @@ export class SimpleWave {
       .onChange(() => (this.material.uniforms.waveSpeed.value = uniforms.waveSpeed)
       );
     generalFolder
-      .add(uniforms, "waveAmplitude", 0.0, 1.0)
+      .add(uniforms, "waveMaxAmplitude", 0.0, 1.0)
       .name("Amplitude")
-      .onChange(() => (this.material.uniforms.waveAmplitude.value = uniforms.waveAmplitude),
+      .onChange(() => (this.material.uniforms.waveMaxAmplitude.value = uniforms.waveMaxAmplitude),
       );
     generalFolder
       .add(uniforms, "displacement", -0.5 * geometrySize, 0.5 * geometrySize)
       .name("Displacement")
       .onChange(() => (this.material.uniforms.displacement.value = uniforms.displacement)
     );
+    generalFolder
+      .add(uniforms, "waveReach", 0.0, geometrySize)
+      .name("Wave Reach")
+      .onChange(() => (this.material.uniforms.waveReach.value = uniforms.waveReach)
+    );
+
+    toggleFolder
+      .add(uniforms, "waveEnabled")
+      .name("Wave Enabled (Space)")
+      .onChange(() => (this.material.uniforms.waveEnabled.value = uniforms.waveEnabled)
+    );
+    toggleFolder
+      .add(uniforms, "amplitudeDelta", 0.0, 5.0)
+      .name("Amplitude")
+      .onChange(() => (this.material.uniforms.amplitudeDelta.value = uniforms.amplitudeDelta)
+    );
+    toggleFolder
+      .add(uniforms, "wavePropagationDelta", 0.0, geometrySize)
+      .name("Wave Propagation")
+      .onChange(() => (this.material.uniforms.wavePropagationDelta.value = uniforms.wavePropagationDelta)
+    );
+    
   }
 
   updateTime(elapsedTime: number) {
