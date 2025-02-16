@@ -6,6 +6,7 @@ import fragmentShader from "../shaders/simpleWave/fragment.glsl";
 
 export class SimpleWave {
   private camera: THREE.PerspectiveCamera;
+  private geometrySize: number;
   private defaultUniforms: any;
   clock: THREE.Clock;
 //  geometry: THREE.PlaneGeometry;
@@ -15,9 +16,9 @@ export class SimpleWave {
   raycaster = new THREE.Raycaster();
   mouse = new THREE.Vector2();
 
-  constructor(camera: THREE.PerspectiveCamera, gui: GUI){
+  constructor(camera: THREE.PerspectiveCamera, gui: GUI, geometrySize: number) {
     this.camera = camera;
-
+    this.geometrySize = geometrySize;
     // Default uniforms for shaders
     this.defaultUniforms = {
       waveFrequency: 10.0,
@@ -32,7 +33,7 @@ export class SimpleWave {
     this.gui = gui;
     this.clock = new THREE.Clock()
 
-    this.addUIControls();
+    this.addUIControls(this.geometrySize);
 
     document.addEventListener("click", (event) => {
 
@@ -43,10 +44,8 @@ export class SimpleWave {
 
       if (this.mesh) {
       const intersects = this.raycaster.intersectObjects([this.mesh]);
-      console.log(intersects);
 
       if (intersects.length > 0) {
-        console.log("Clicked on mesh");
         
         const intersectionPoint = intersects[0].point;
         // converting intersection point to mesh local space
@@ -58,14 +57,16 @@ export class SimpleWave {
           localPoint.x / scale.x,
           localPoint.y / scale.y,
         );
-        console.log("Scaled Local Point X:", scaledLocalPoint.x);
         this.material.uniforms.displacement.value = scaledLocalPoint.x;
       }
 
+      }
+    });
 
-      this.material.uniforms.waveEnabled.value = !this.material.uniforms.waveEnabled.value;
-      console.log("Wave Enabled:", this.material.uniforms.waveEnabled.value);
-    }
+    document.addEventListener("keydown", (event) => {
+      if (event.key === " ") {
+        this.material.uniforms.waveEnabled.value = !this.material.uniforms.waveEnabled.value;
+      }
     });
   }
 
@@ -90,7 +91,7 @@ export class SimpleWave {
     return material;
   }
 
-  private addUIControls() {
+  private addUIControls(geometrySize: number) {
     const generalFolder = this.gui.addFolder("Simple Wave Shader");
     const uniforms = this.defaultUniforms;
 
@@ -111,10 +112,10 @@ export class SimpleWave {
       .onChange(() => (this.material.uniforms.waveAmplitude.value = uniforms.waveAmplitude),
       );
     generalFolder
-      .add(uniforms, "displacement", -0.5, 0.5)
+      .add(uniforms, "displacement", -0.5 * geometrySize, 0.5 * geometrySize)
       .name("Displacement")
-      .onChange(() => (this.material.uniforms.displacement.value = uniforms.displacement),
-      );
+      .onChange(() => (this.material.uniforms.displacement.value = uniforms.displacement)
+    );
   }
 
   updateTime(elapsedTime: number) {

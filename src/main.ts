@@ -100,7 +100,8 @@ class App {
       64,
     );
     // Create shader materials
-    const simpleWave = new SimpleWave(this.camera, gui);
+
+    const simpleWave = new SimpleWave(this.camera, gui, geometrySize);
     const blinnPhong = new BlinnPhong(this.camera, gui);
     const crt = new CRT(this.camera, gui, geometrySize);
 
