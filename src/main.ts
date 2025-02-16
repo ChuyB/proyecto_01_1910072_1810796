@@ -1,13 +1,16 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 import { BlinnPhong } from "./materials/blinnPhong";
+import { SimpleWave } from "./materials/simpleWave";
 import GUI from "lil-gui";
+import { CRT } from "./materials/crt";
 
 class App {
   private scene: THREE.Scene;
   private camera: THREE.PerspectiveCamera;
   private renderer: THREE.WebGLRenderer;
-  // private clock: THREE.Clock;
+  private element: SimpleWave | BlinnPhong | CRT;
+  private clock: THREE.Clock;
   private controls: OrbitControls;
 
   private camConfig = {
@@ -31,7 +34,7 @@ class App {
     this.camera.position.set(0, 0, 3);
 
     // Setup clock
-    // this.clock = new THREE.Clock();
+    this.clock = new THREE.Clock();
 
     // Setup renderer
     this.renderer = new THREE.WebGLRenderer({
@@ -58,8 +61,10 @@ class App {
     const gui = new GUI();
 
     // Adds Blinn-Phong cube
-    const cube = new BlinnPhong(this.camera, gui);
-    this.scene.add(cube.mesh);
+    // this.element = new BlinnPhong(this.camera, gui);
+    // this.element = new SimpleWave(this.camera, gui);
+    this.element = new CRT(this.camera, gui);
+    this.scene.add(this.element.mesh);
 
     // Initialize
     this.onWindowResize();
@@ -76,7 +81,8 @@ class App {
   }
 
   private animate(): void {
-    // const deltaTime = this.clock.getDelta();
+    const elapsedTime = this.clock.getElapsedTime();
+    this.element.updateTime(elapsedTime);
     this.controls.update();
     this.renderer.render(this.scene, this.camera);
   }
@@ -85,7 +91,7 @@ class App {
     this.camera.aspect = this.camConfig.aspect;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(window.innerWidth, window.innerHeight);
-  }
+    this.element.material.uniforms.uResolution.value.set(window.innerWidth, window.innerHeight);  }
 }
 
 new App();
