@@ -113,6 +113,11 @@ class App {
     this.mesh = new THREE.Mesh(this.geometry, this.shader.material);
     this.scene.add(this.mesh);
 
+    // This shader requires the position in the mesh so it can be interactive
+    if (this.shader instanceof SimpleWave) {
+      this.shader.setMesh(this.mesh);
+    }
+
     // Initialize
     this.onWindowResize();
 

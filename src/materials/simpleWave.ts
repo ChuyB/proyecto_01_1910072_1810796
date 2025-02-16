@@ -9,14 +9,13 @@ export class SimpleWave {
   private defaultUniforms: any;
   clock: THREE.Clock;
 //  geometry: THREE.PlaneGeometry;
-  geometry: THREE.BoxGeometry;
   material: THREE.RawShaderMaterial;
-  mesh: THREE.Mesh;
+  mesh: THREE.Mesh | null = null;
   gui: GUI;
   raycaster = new THREE.Raycaster();
   mouse = new THREE.Vector2();
 
-  constructor(camera: THREE.PerspectiveCamera, gui: GUI) {
+  constructor(camera: THREE.PerspectiveCamera, gui: GUI){
     this.camera = camera;
 
     // Default uniforms for shaders
@@ -29,31 +28,44 @@ export class SimpleWave {
       u_time: 0.0,
       resolution: new THREE.Vector2(window.innerWidth, window.innerHeight),
     };
-    this.geometry = new THREE.BoxGeometry(1, 1, 1, 32, 32, 32);
-    this.geometry.computeVertexNormals();
     this.material = this.createMaterial(this.defaultUniforms);
     this.gui = gui;
-    this.mesh = new THREE.Mesh(this.geometry, this.material);
     this.clock = new THREE.Clock()
 
     this.addUIControls();
+
     document.addEventListener("click", (event) => {
 
       this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
       this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
       
       this.raycaster.setFromCamera(this.mouse, this.camera);
+
+      if (this.mesh) {
       const intersects = this.raycaster.intersectObjects([this.mesh]);
+      console.log(intersects);
 
       if (intersects.length > 0) {
         console.log("Clicked on mesh");
-
+        
         const intersectionPoint = intersects[0].point;
-        this.material.uniforms.displacement.value = intersectionPoint.x;
+        // converting intersection point to mesh local space
+        const localPoint = this.mesh.worldToLocal(intersectionPoint);
+        const scale = new THREE.Vector3();
+        this.mesh.getWorldScale(scale);
+        
+        const scaledLocalPoint = new THREE.Vector2(
+          localPoint.x / scale.x,
+          localPoint.y / scale.y,
+        );
+        console.log("Scaled Local Point X:", scaledLocalPoint.x);
+        this.material.uniforms.displacement.value = scaledLocalPoint.x;
       }
 
 
       this.material.uniforms.waveEnabled.value = !this.material.uniforms.waveEnabled.value;
+      console.log("Wave Enabled:", this.material.uniforms.waveEnabled.value);
+    }
     });
   }
 
@@ -107,5 +119,9 @@ export class SimpleWave {
 
   updateTime(elapsedTime: number) {
     this.material.uniforms.uTime.value = elapsedTime;
+  }
+
+  setMesh(mesh: THREE.Mesh) {
+    this.mesh = mesh;
   }
 }
