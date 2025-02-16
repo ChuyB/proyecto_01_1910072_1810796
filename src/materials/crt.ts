@@ -7,17 +7,15 @@ import fragmentShader from "../shaders/crt/fragment.glsl";
 export class CRT {
   private camera: THREE.PerspectiveCamera;
   private defaultUniforms: any;
-  geometry: THREE.PlaneGeometry;
+  private gui: GUI;
   material: THREE.RawShaderMaterial;
-  mesh: THREE.Mesh;
-  gui: GUI;
 
-  constructor(camera: THREE.PerspectiveCamera, gui: GUI) {
+  constructor(camera: THREE.PerspectiveCamera, gui: GUI, size: number) {
     this.camera = camera;
 
     // Default uniforms for shaders
     this.defaultUniforms = {
-      uSize: 4.0,
+      uSize: size,
       uFrequency: 400.0,
       uTime: 0.0,
       uSpeed: 2.5,
@@ -27,17 +25,8 @@ export class CRT {
       uVignette: 0.34,
     };
 
-    this.geometry = new THREE.PlaneGeometry(
-      this.defaultUniforms.uSize,
-      this.defaultUniforms.uSize,
-      64,
-      64,
-    );
-    this.geometry.computeVertexNormals();
     this.material = this.createMaterial();
     this.gui = gui;
-    this.mesh = new THREE.Mesh(this.geometry, this.material);
-
     this.addUIControls();
   }
 
@@ -55,7 +44,7 @@ export class CRT {
         uResolution: {
           value: new THREE.Vector2(window.innerWidth, window.innerHeight),
         },
-
+        // Custom uniforms
         uSize: { value: this.defaultUniforms.uSize },
         uTexture: { value: textureLoader.load("smb.png") },
         uFrequency: { value: this.defaultUniforms.uFrequency },
@@ -73,35 +62,38 @@ export class CRT {
 
   private addUIControls() {
     const uniforms = this.defaultUniforms;
-    this.gui
+    const shaderFolder = this.gui.addFolder("CRT Shader");
+    const scanLinesFolder = shaderFolder.addFolder("Scan Lines");
+    scanLinesFolder
       .add(uniforms, "uFrequency", 0.0, 1000.0)
       .name("Frequency")
       .onChange(
         () => (this.material.uniforms.uFrequency.value = uniforms.uFrequency),
       );
-    this.gui
+    scanLinesFolder
       .add(uniforms, "uSpeed", 0.0, 10.0)
       .name("Speed")
       .onChange(() => (this.material.uniforms.uSpeed.value = uniforms.uSpeed));
-    this.gui
+    const geometryFolder = shaderFolder.addFolder("Geometry");
+    geometryFolder
       .add(uniforms, "uCurvature", 0.0, 5.0)
       .name("Curvature")
       .onChange(
         () => (this.material.uniforms.uCurvature.value = uniforms.uCurvature),
       );
-    this.gui
+    geometryFolder
       .add(uniforms, "uRadius", 0, 1.0)
       .name("Radius")
       .onChange(
         () => (this.material.uniforms.uRadius.value = uniforms.uRadius),
       );
-    this.gui
+    geometryFolder
       .add(uniforms, "uBrightness", 0.0, 5.0)
       .name("Brightness")
       .onChange(
         () => (this.material.uniforms.uBrightness.value = uniforms.uBrightness),
       );
-    this.gui
+    geometryFolder
       .add(uniforms, "uVignette", 0.0, 1.0)
       .name("Vignette")
       .onChange(

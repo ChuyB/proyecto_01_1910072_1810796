@@ -2,14 +2,16 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 import { BlinnPhong } from "./materials/blinnPhong";
 import { SimpleWave } from "./materials/simpleWave";
-import GUI from "lil-gui";
 import { CRT } from "./materials/crt";
+import GUI from "lil-gui";
 
 class App {
   private scene: THREE.Scene;
   private camera: THREE.PerspectiveCamera;
   private renderer: THREE.WebGLRenderer;
-  private element: SimpleWave | BlinnPhong | CRT;
+  private shader: SimpleWave | BlinnPhong | CRT;
+  private geometry: THREE.PlaneGeometry | THREE.BoxGeometry;
+  private mesh: THREE.Mesh;
   private clock: THREE.Clock;
   private controls: OrbitControls;
 
@@ -59,12 +61,57 @@ class App {
 
     // GUI controls
     const gui = new GUI();
+    const folder = gui.addFolder("General Settings");
+    const selectedGeometry = { position: 0 };
+    const selectedMaterial = { position: 0 };
+    folder
+      .add(selectedMaterial, "position", {
+        SimpleWave: 0,
+        BlinnPhong: 1,
+        CRT: 2,
+      })
+      .name("Material")
+      .onChange(() => {
+        this.shader = shaders[selectedMaterial.position];
+        this.mesh.material = this.shader.material;
+      });
+    folder
+      .add(selectedGeometry, "position", { Plane: 0, Box: 1 })
+      .name("Geometry")
+      .onChange(() => {
+        this.geometry = geometries[selectedGeometry.position];
+        this.mesh.geometry = this.geometry;
+      });
 
-    // Adds Blinn-Phong cube
-    // this.element = new BlinnPhong(this.camera, gui);
-    this.element = new SimpleWave(this.camera, gui);
-    // this.element = new CRT(this.camera, gui);
-    this.scene.add(this.element.mesh);
+    // Create geometries
+    const geometrySize = 4.0;
+    const planeGeometry = new THREE.PlaneGeometry(
+      geometrySize,
+      geometrySize,
+      64,
+      64,
+    );
+    const boxGeometry = new THREE.BoxGeometry(
+      geometrySize,
+      geometrySize,
+      geometrySize,
+      64,
+      64,
+      64,
+    );
+    // Create shader materials
+    const simpleWave = new SimpleWave(this.camera, gui);
+    const blinnPhong = new BlinnPhong(this.camera, gui);
+    const crt = new CRT(this.camera, gui, geometrySize);
+
+    // Arrays of geometries and shaders
+    const geometries = [planeGeometry, boxGeometry];
+    const shaders = [simpleWave, blinnPhong, crt];
+
+    this.geometry = geometries[selectedGeometry.position];
+    this.shader = shaders[selectedMaterial.position];
+    this.mesh = new THREE.Mesh(this.geometry, this.shader.material);
+    this.scene.add(this.mesh);
 
     // Initialize
     this.onWindowResize();
@@ -82,7 +129,7 @@ class App {
 
   private animate(): void {
     const elapsedTime = this.clock.getElapsedTime();
-    this.element.updateTime(elapsedTime);
+    this.shader.updateTime(elapsedTime);
     this.controls.update();
     this.renderer.render(this.scene, this.camera);
   }
@@ -91,7 +138,11 @@ class App {
     this.camera.aspect = this.camConfig.aspect;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(window.innerWidth, window.innerHeight);
-    this.element.material.uniforms.uResolution.value.set(window.innerWidth, window.innerHeight);  }
+    this.shader.material.uniforms.uResolution.value.set(
+      window.innerWidth,
+      window.innerHeight,
+    );
+  }
 }
 
 new App();
