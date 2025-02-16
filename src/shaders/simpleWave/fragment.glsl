@@ -1,7 +1,7 @@
 precision highp float;
 
-uniform float u_time;
-uniform vec2 u_resolution;
+uniform float uTime;
+uniform vec2 uResolution;
 out vec4 fragColor;
 
 in float v_height;
@@ -58,7 +58,7 @@ void main() {
 
   // step 1 - show swizzling
   // swizzling:
-  vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+  vec2 uv = gl_FragCoord.xy / uResolution.xy;
   // conversion to [-1, 1] interval
   uv = uv * 2.0f - 1.0f;
   

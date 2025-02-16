@@ -62,8 +62,8 @@ class App {
 
     // Adds Blinn-Phong cube
     // this.element = new BlinnPhong(this.camera, gui);
-    // this.element = new SimpleWave(this.camera, gui);
-    this.element = new CRT(this.camera, gui);
+    this.element = new SimpleWave(this.camera, gui);
+    // this.element = new CRT(this.camera, gui);
     this.scene.add(this.element.mesh);
 
     // Initialize

@@ -7,6 +7,7 @@ import fragmentShader from "../shaders/simpleWave/fragment.glsl";
 export class SimpleWave {
   private camera: THREE.PerspectiveCamera;
   private defaultUniforms: any;
+  private clock : THREE.Clock;
   geometry: THREE.PlaneGeometry
   material: THREE.RawShaderMaterial;
   mesh: THREE.Mesh;
@@ -26,6 +27,7 @@ export class SimpleWave {
     this.material = this.createMaterial(this.defaultUniforms);
     this.gui = gui;
     this.mesh = new THREE.Mesh(this.geometry, this.material);
+    this.clock = new THREE.Clock()
 
     this.addUIControls();
   }
@@ -36,8 +38,8 @@ export class SimpleWave {
       fragmentShader,
       uniforms: {
         waveFrequency: { value: uniforms.waveFrequency },
-        u_time: { value: uniforms.u_time },
-        u_resolution: { value: uniforms.resolution},
+        uTime: { value: uniforms.u_time },
+        uResolution: { value: uniforms.resolution},
         projectionMatrix: { value: this.camera.projectionMatrix },
         viewMatrix: { value: this.camera.matrixWorldInverse },
         modelMatrix: { value: new THREE.Matrix4() },
@@ -53,13 +55,13 @@ export class SimpleWave {
 
     generalFolder
       .add(uniforms, "waveFrequency", 0.0, 100.0)
-      .name("Wave Frequency")
+      .name("Frequency")
       .onChange(
         () => (this.material.uniforms.waveFrequency.value = uniforms.waveFrequency),
       );
   }
 
   updateTime(elapsedTime: number) {
-    this.material.uniforms.u_time.value = elapsedTime;
+    this.material.uniforms.uTime.value = elapsedTime;
   }
 }
