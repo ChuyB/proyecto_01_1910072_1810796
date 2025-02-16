@@ -55,7 +55,7 @@ export class SimpleWave {
   }
 
   private addUIControls() {
-    const generalFolder = this.gui.addFolder("General");
+    const generalFolder = this.gui.addFolder("Simple Wave Shader");
     const uniforms = this.defaultUniforms;
 
     generalFolder

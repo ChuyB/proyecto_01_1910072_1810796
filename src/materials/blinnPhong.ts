@@ -7,9 +7,7 @@ import fragmentShader from "../shaders/blinnPhong/fragment.glsl";
 export class BlinnPhong {
   private camera: THREE.PerspectiveCamera;
   private defaultUniforms: any;
-  geometry: THREE.BoxGeometry;
   material: THREE.RawShaderMaterial;
-  mesh: THREE.Mesh;
   gui: GUI;
 
   constructor(camera: THREE.PerspectiveCamera, gui: GUI) {
@@ -26,12 +24,9 @@ export class BlinnPhong {
       shininess: 25.0,
       screenGamma: 2.2,
     };
-    this.geometry = new THREE.BoxGeometry(1, 1, 1, 32, 32, 32);
-    this.geometry.computeVertexNormals();
+
     this.material = this.createMaterial(this.defaultUniforms);
     this.gui = gui;
-    this.mesh = new THREE.Mesh(this.geometry, this.material);
-
     this.addUIControls();
   }
 
@@ -75,6 +70,9 @@ export class BlinnPhong {
         projectionMatrix: { value: this.camera.projectionMatrix },
         viewMatrix: { value: this.camera.matrixWorldInverse },
         modelMatrix: { value: new THREE.Matrix4() },
+        uResolution: {
+          value: new THREE.Vector2(window.innerWidth, window.innerHeight),
+        },
       },
       glslVersion: THREE.GLSL3,
     });
@@ -82,7 +80,7 @@ export class BlinnPhong {
   }
 
   private addUIControls() {
-    const specular = this.gui.addFolder("Specular");
+    const specular = this.gui.addFolder("Blinn-Phong Shader");
     const lightFolder = specular.addFolder("Light");
     const uniforms = this.defaultUniforms;
     lightFolder
