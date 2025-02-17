@@ -1,38 +1,29 @@
-# Shader Playground
+# Shader materials | Entrega 01 lab
 
-Originally developed by Jorge Palacios for teaching Computer Graphics at Universidad Simón Bolívar, Venezuela. You are welcome to copy and modify it as any other student for your own perusal.
+## Integrantes
+Néstor Herrera - Carnet 18-10796
+Jesús Bovea - Carnet 19-10072
 
-This playground may grow as my time teaching Computer Graphics grows as well, and I'm able find ways to better collaborate with students, and offer them a good starting point to practice what we learn about shaders.
+## Dependencias utilizadas
 
-Keep an eye on the main repo to track changes or, better yet, star it.
-
-## Development environment
-
-This playground was developed using the following tech stack:
+El API utilizado es Three.js junto con GLSL para los shaders. Se utilizaron las siguientes dependencias para los shaders y GUI:
 
 - [Visual Studio Code](https://code.visualstudio.com/)
 - [Node.js v20.13.1](https://nodejs.org/en)
 - [Vite](https://vite.dev/)
 - [Vite Plugin GLSL](https://www.npmjs.com/package/vite-plugin-glsl)
 - [Three.js](https://threejs.org/)
+- [lil-gui](https://github.com/georgealways/lil-gui)
 
-## How to use this playground
+## Corriendo el proyecto
 
-There are different ways of using this playground project:
+1. Clonar el repositorio.
+2. Tener instalado Node.js (v20.10+) y un navegador (si estás viendo esto probablemente tienes un navegador).
+3. Ejecutar `npm install` para instalar dependencias.
+4. Ejecutar `npm run dev` para ejecutar el proyecto usando Three.js, usualmente en el puerto 5173. El comando te dice a que direccion ir en tu navegador.
 
-1. You can use it to test your shaders via Three.js using the already set up scene.
-2. You can use it to test your fragment shaders on Visual Studio Code using the glslCanvas plugin.
-3. All of the above.
+## Cómo utiizar
 
-### Shader files
+En la escena esta cargado un mesh en el cual se puede escoger entre 2 geometrias (Plane o Box) y los 3 materiales programados (Simple Waves, BlinnPhong y CRT) utilizando el menu general de la GUI. Tambien se encuentran ahi los parametros para modificar uniforms de los diferentes materiales en forma de menús desplegables.
 
-- `canvas.frag` - fragment shader to be used as base example when using the **glslCanvas** VSCode plugin
-- `vertex.glsl` - vertex shader used in the Three.js project
-- `fragment.glsl` - fragment shader used in the Three.js project
-
-## How to run this project
-
-1. Download and copy this project
-2. Install a compatible Node.js version (I guess any v20.10+ should suffice)
-3. Run `npm install` to install the dependencies
-4. Run `npm run dev` to run the Three.js project, usually on port 5173
+Adicional a eso, vale mencionar que para el shader Simple Wave, se puede presionar espacio para activar/desactivar el efecto, y hacer click en el mesh para asignar el valor de displacement (lugar donde se originan las ondas).
