@@ -22,7 +22,7 @@ El API utilizado es Three.js junto con GLSL para los shaders. Se utilizaron las 
 3. Ejecutar `npm install` para instalar dependencias.
 4. Ejecutar `npm run dev` para ejecutar el proyecto usando Three.js, usualmente en el puerto 5173. El comando te dice a que direccion ir en tu navegador.
 
-## Cómo utiizar
+## Cómo utilizar
 
 En la escena esta cargado un mesh en el cual se puede escoger entre 2 geometrias (Plane o Box) y los 3 materiales programados (Simple Waves, BlinnPhong y CRT) utilizando el menu general de la GUI. Tambien se encuentran ahi los parametros para modificar uniforms de los diferentes materiales en forma de menús desplegables.
 
