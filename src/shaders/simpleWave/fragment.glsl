@@ -1,7 +1,7 @@
-precision highp float;
+precision mediump float;
 
-uniform float u_time;
-uniform vec2 u_resolution;
+uniform float uTime;
+uniform vec2 uResolution;
 out vec4 fragColor;
 
 in float v_height;
@@ -58,17 +58,17 @@ void main() {
 
   // step 1 - show swizzling
   // swizzling:
-  vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+  vec2 uv = gl_FragCoord.xy / uResolution.xy;
   // conversion to [-1, 1] interval
   uv = uv * 2.0f - 1.0f;
   
   vec2 size = vec2(1.1f, 0.3f);  
 
-  float waveDirection = sign(uv.y);
+  vec2 waveDirection = vec2(0.0f, 1.0f);
 
   // flag colors (red is base)
-
-  vec2 blueOffset = vec2(0.0f, v_height * PROPORTION * waveDirection);
+  float displacement = v_height * dot(waveDirection, uv);
+  vec2 blueOffset = vec2(0.0f, displacement * 0.6);
   float distanceToBlue = sdfBox(blueOffset, uv, size / SIZE_PROPORTION);
   
   vec2 yellowOffset = vec2(0.0f, 3.0f * PROPORTION);
@@ -94,7 +94,7 @@ void main() {
     
     // star locations relative to center (parabolic function in y)
     float xOffset =  - 0.16 + float(i) * 0.045; // X offset
-    float yOffset = 0.035 - pow(float(i) - 3.5,2.0) * 0.005 + v_height * 0.3; 
+    float yOffset = 0.035 - pow(float(i) - 3.5,2.0) * 0.005 + v_height * 0.08; 
     starOffsets[i] = vec2(xOffset, yOffset);
     
     // calculate sdf and set color
