@@ -1,8 +1,8 @@
 # Shader materials | Entrega 01 lab
 
 ## Integrantes
-Néstor Herrera - Carnet 18-10796
-Jesús Bovea - Carnet 19-10072
+- Néstor Herrera - Carnet 18-10796
+- Jesús Bovea - Carnet 19-10072
 
 ## Dependencias utilizadas
 
